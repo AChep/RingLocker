@@ -1,0 +1,37 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+
+    <com.achep.ringlocker.locker.LockerView
+            android:id="@+id/locker"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"/>
+
+    <TextView
+            android:id="@+id/time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:fontFamily="sans-serif-light"
+            android:textColor="@android:color/white"
+            android:textSize="80sp"
+            android:shadowColor="#60000000"
+            android:shadowRadius="8"
+            android:shadowDx="8"
+            android:shadowDy="8"/>
+    <TextView
+            android:id="@+id/date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="-10dip"
+            android:layout_below="@id/time"
+            android:fontFamily="sans-serif-light"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:shadowColor="#60000000"
+            android:shadowRadius="8"
+            android:shadowDx="8"
+            android:shadowDy="8"/>
+
+</RelativeLayout>
