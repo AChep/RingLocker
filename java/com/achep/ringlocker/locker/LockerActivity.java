@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.ContentObserver;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -82,9 +83,15 @@ public class LockerActivity extends Activity {
 
             @Override
             public void progress(float value) {
+                float alpha = 1 - value * 2;
+                if (alpha < 0) alpha = 0;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                    mTimeView.setAlpha(1f - value * 2);
-                    mDateView.setAlpha(1f - value * 2);
+                    mTimeView.setAlpha(alpha);
+                    mDateView.setAlpha(alpha);
+                } else {
+                    final int color = Color.argb((int) (255 * alpha), 255, 255, 255);
+                    mTimeView.setTextColor(color);
+                    mDateView.setTextColor(color);
                 }
             }
         });
@@ -94,10 +101,6 @@ public class LockerActivity extends Activity {
 
     @Override
     public void onAttachedToWindow() {
-        // TODO: Try to handle home button click on HC+
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.GINGERBREAD_MR1) {
-            getWindow().setType(WindowManager.LayoutParams.TYPE_KEYGUARD);
-        }
         super.onAttachedToWindow();
 
         if (mAttached) {
@@ -134,7 +137,6 @@ public class LockerActivity extends Activity {
     }
 
     @Override
-    @SuppressWarnings("NullableProblems")
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         return true;
     }

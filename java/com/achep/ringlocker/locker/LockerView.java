@@ -90,7 +90,7 @@ public class LockerView extends View {
         float ratio = mRadius / mTargetRadius;
         if (ratio > 1f) ratio = 1f;
 
-        canvas.drawARGB((int) (215 * (1f - ratio)), 0, 0, 0);
+        canvas.drawARGB((int) (210 * (1f - ratio)), 0, 0, 0);
         canvas.drawCircle(mCenter[0], mCenter[1], mRadius, mErasePaint);
     }
 

@@ -42,7 +42,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="-10dip"
             android:layout_below="@id/time"
-            android:fontFamily="sans-serif-light"
+            android:fontFamily="sans-serif-condensed"
             android:textColor="@android:color/white"
             android:textSize="16sp"
             android:shadowColor="#60000000"

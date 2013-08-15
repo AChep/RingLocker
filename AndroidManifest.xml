@@ -15,30 +15,30 @@
      limitations under the License.
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.achep.ringlocker"
-    android:versionCode="10"
-    android:versionName="2.0.1" >
+          package="com.achep.ringlocker"
+          android:versionCode="10"
+          android:versionName="2.0.1">
 
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
-    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
     <uses-sdk
-        android:minSdkVersion="7"
-        android:targetSdkVersion="16" />
+            android:minSdkVersion="7"
+            android:targetSdkVersion="16"/>
 
     <application
-        android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
-        android:label="@string/app_name" >
+            android:allowBackup="true"
+            android:icon="@drawable/ic_launcher"
+            android:label="@string/app_name">
         <activity
-            android:name=".MainActivity"
-            android:launchMode="singleInstance"
-            android:label="@string/app_name" >
+                android:name=".MainActivity"
+                android:launchMode="singleInstance"
+                android:label="@string/app_name">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
 
@@ -47,13 +47,19 @@
                 android:hardwareAccelerated="true"
                 android:launchMode="singleInstance"
                 android:name=".locker.LockerActivity"
-                android:theme="@style/LockerTheme" />
+                android:theme="@style/LockerTheme">
 
-        <service android:name=".KeyguardService" />
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.HOME"/>
+            </intent-filter>
+        </activity>
 
-        <receiver android:name=".BootReceiver" >
-            <intent-filter android:priority="100" >
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
+        <service android:name=".KeyguardService"/>
+
+        <receiver android:name=".BootReceiver">
+            <intent-filter android:priority="100">
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
     </application>
