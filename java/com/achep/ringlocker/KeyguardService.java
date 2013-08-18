@@ -63,7 +63,9 @@ public class KeyguardService extends Service {
         final Notification notification = new Notification();
         notification.setLatestEventInfo(this, getString(R.string.app_name), "is running!",
                 PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), 0));
-        startForeground(0, notification);
+        notification.flags |= Notification.FLAG_NO_CLEAR;
+
+        startForeground(1337, notification);
     }
 
     @Override

@@ -41,9 +41,9 @@ public final class RenderManager extends Looper {
         if (mDrawRequired) {
             mDrawRequired = false;
             render();
-            return CONTINUE_LOOPING;
+            return CONTINUE;
         }
-        return STOP_LOOPING;
+        return STOP;
     }
 
     private void render() {
