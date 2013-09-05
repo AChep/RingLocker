@@ -17,11 +17,13 @@
 package com.achep.ringlocker.locker;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
+import android.os.Handler;
+import android.os.Message;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -33,13 +35,24 @@ import com.achep.ringlocker.utils.DisplayUtils;
  */
 public class LockerView extends View {
 
+    private static final int MAX_TOUCH_TIME = 2000; // ms
 
     private RenderManager mRenderManager;
     private Paint mErasePaint;
+    private Bitmap mBitmap;
+    private Canvas mCanvas;
 
     private final float[] mCenter = new float[2];
     private float mRadius;
     private float mTargetRadius;
+    private boolean isTouched;
+
+    private final Handler mHandler = new Handler() {
+        public void handleMessage(Message m) {
+            hide();
+            mRenderManager.requestRender();
+        }
+    };
 
     private OnUnlockListener mOnUnlockListener;
 
@@ -72,7 +85,6 @@ public class LockerView extends View {
         mErasePaint = new Paint();
         mErasePaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.MULTIPLY));
         mErasePaint.setAntiAlias(true);
-        mErasePaint.setColor(Color.BLACK);
         mErasePaint.setAlpha(0);
     }
 
@@ -83,6 +95,17 @@ public class LockerView extends View {
     @Override
     public void onSizeChanged(int w, int h, int oldw, int oldh) {
         mTargetRadius = (float) (Math.sqrt(w * w + h * h) / 3);
+
+        if (mBitmap != null && !mBitmap.isRecycled())
+            mBitmap.recycle();
+        mBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        mCanvas = new Canvas(mBitmap);
+    }
+
+    @Override
+    protected void onDetachedFromWindow(){
+        super.onDetachedFromWindow();
+        mHandler.removeMessages(0);
     }
 
     @Override
@@ -90,8 +113,11 @@ public class LockerView extends View {
         float ratio = mRadius / mTargetRadius;
         if (ratio > 1f) ratio = 1f;
 
-        canvas.drawARGB((int) (210 * (1f - ratio)), 0, 0, 0);
-        canvas.drawCircle(mCenter[0], mCenter[1], mRadius, mErasePaint);
+        mCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
+        mCanvas.drawARGB((int) (210 * (1f - ratio)), 0, 0, 0);
+        mCanvas.drawCircle(mCenter[0], mCenter[1], mRadius, mErasePaint);
+
+        canvas.drawBitmap(mBitmap, 0, 0, null);
     }
 
     @Override
@@ -99,10 +125,14 @@ public class LockerView extends View {
         final float x = event.getX(), y = event.getY();
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
+                isTouched = true;
                 mCenter[0] = x;
                 mCenter[1] = y;
+                mHandler.sendEmptyMessageDelayed(0, MAX_TOUCH_TIME);
             case MotionEvent.ACTION_MOVE:
-                calculateRadius(x, y);
+                if (isTouched) {
+                    calculateRadius(x, y);
+                }
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
@@ -119,7 +149,7 @@ public class LockerView extends View {
     private void calculateRadius(float x, float y) {
         final float x0 = mCenter[0] - x;
         final float y0 = mCenter[1] - y;
-        setRadius((float)Math.sqrt(x0 * x0 + y0 * y0));
+        setRadius((float) Math.sqrt(x0 * x0 + y0 * y0));
     }
 
     private void setRadius(float radius) {
@@ -135,6 +165,7 @@ public class LockerView extends View {
 
     // TODO: Hide animation
     private void hide() {
+        isTouched = false;
         setRadius(0);
     }
 
