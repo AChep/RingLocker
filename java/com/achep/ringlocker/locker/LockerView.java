@@ -128,6 +128,8 @@ public class LockerView extends View {
                 isTouched = true;
                 mCenter[0] = x;
                 mCenter[1] = y;
+
+                mHandler.removeMessages(0);
                 mHandler.sendEmptyMessageDelayed(0, MAX_TOUCH_TIME);
             case MotionEvent.ACTION_MOVE:
                 if (isTouched) {
