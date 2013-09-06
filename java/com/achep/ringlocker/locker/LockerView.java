@@ -36,6 +36,7 @@ import com.achep.ringlocker.utils.DisplayUtils;
 public class LockerView extends View {
 
     private static final int MAX_TOUCH_TIME = 2000; // ms
+    private static final int MESSAGE_CANCEL_TOUCH = 0;
 
     private RenderManager mRenderManager;
     private Paint mErasePaint;
@@ -49,8 +50,10 @@ public class LockerView extends View {
 
     private final Handler mHandler = new Handler() {
         public void handleMessage(Message m) {
-            hide();
-            mRenderManager.requestRender();
+            if (m.what == MESSAGE_CANCEL_TOUCH) {
+                hide();
+                mRenderManager.requestRender();
+            }
         }
     };
 
@@ -105,7 +108,7 @@ public class LockerView extends View {
     @Override
     protected void onDetachedFromWindow(){
         super.onDetachedFromWindow();
-        mHandler.removeMessages(0);
+        mHandler.removeMessages(MESSAGE_CANCEL_TOUCH);
     }
 
     @Override
@@ -129,8 +132,8 @@ public class LockerView extends View {
                 mCenter[0] = x;
                 mCenter[1] = y;
 
-                mHandler.removeMessages(0);
-                mHandler.sendEmptyMessageDelayed(0, MAX_TOUCH_TIME);
+                mHandler.removeMessages(MESSAGE_CANCEL_TOUCH);
+                mHandler.sendEmptyMessageDelayed(MESSAGE_CANCEL_TOUCH, MAX_TOUCH_TIME);
             case MotionEvent.ACTION_MOVE:
                 if (isTouched) {
                     calculateRadius(x, y);
