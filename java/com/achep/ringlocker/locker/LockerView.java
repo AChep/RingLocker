@@ -28,6 +28,8 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.achep.Looper;
+import com.achep.ringlocker.R;
 import com.achep.ringlocker.utils.DisplayUtils;
 
 /**
@@ -43,6 +45,7 @@ public class LockerView extends View {
     private Bitmap mBitmap;
     private Canvas mCanvas;
 
+    private Animator mAnimator;
     private final float[] mCenter = new float[2];
     private float mRadius;
     private float mTargetRadius;
@@ -51,8 +54,7 @@ public class LockerView extends View {
     private final Handler mHandler = new Handler() {
         public void handleMessage(Message m) {
             if (m.what == MESSAGE_CANCEL_TOUCH) {
-                hide();
-                mRenderManager.requestRender();
+                hide(true);
             }
         }
     };
@@ -78,12 +80,15 @@ public class LockerView extends View {
     }
 
     private void init(Context context) {
+        final float refreshRate = DisplayUtils.getRefreshRate(context);
+
+        mAnimator = new Animator(refreshRate, getResources().getInteger(R.integer.config_ringAnimTime));
         mRenderManager = new RenderManager(new RenderManager.OnRenderRequestListener() {
             @Override
             public void OnRenderRequest() {
                 invalidate();
             }
-        }, DisplayUtils.getRefreshRate(context));
+        }, refreshRate);
 
         mErasePaint = new Paint();
         mErasePaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.MULTIPLY));
@@ -106,7 +111,7 @@ public class LockerView extends View {
     }
 
     @Override
-    protected void onDetachedFromWindow(){
+    protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         mHandler.removeMessages(MESSAGE_CANCEL_TOUCH);
     }
@@ -134,6 +139,7 @@ public class LockerView extends View {
 
                 mHandler.removeMessages(MESSAGE_CANCEL_TOUCH);
                 mHandler.sendEmptyMessageDelayed(MESSAGE_CANCEL_TOUCH, MAX_TOUCH_TIME);
+                mAnimator.stop();
             case MotionEvent.ACTION_MOVE:
                 if (isTouched) {
                     calculateRadius(x, y);
@@ -141,13 +147,11 @@ public class LockerView extends View {
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
-                hide();
+                hide(true);
                 break;
             default:
                 return false;
         }
-
-        mRenderManager.requestRender();
         return true;
     }
 
@@ -166,12 +170,53 @@ public class LockerView extends View {
                 mOnUnlockListener.progress(mRadius / mTargetRadius);
             }
         }
+        mRenderManager.requestRender();
     }
 
-    // TODO: Hide animation
-    private void hide() {
+    private void hide(boolean animate) {
         isTouched = false;
-        setRadius(0);
+        if (animate) {
+            mAnimator.start(mRadius, 0, mTargetRadius);
+        } else {
+            setRadius(0);
+        }
+    }
+
+    private class Animator extends Looper {
+
+        private float startRadius;
+        private float endRadius;
+        private long timeEnd;
+
+        private final int duration;
+
+        public Animator(float frameRate, int duration) {
+            super(frameRate);
+            this.duration = duration;
+        }
+
+        public void start(float startRadius, float endRadius, float maxRadius) {
+            this.startRadius = startRadius;
+            this.endRadius = endRadius;
+            this.timeEnd = getTime() + duration;
+
+            super.start();
+        }
+
+        @Override
+        protected boolean onLoop(final long time) {
+            final long deltaTime = timeEnd - time;
+            final float radius = deltaTime > 0
+                    ? (float) (startRadius + (endRadius - startRadius)
+                    * Math.pow((double) (duration - deltaTime) / duration, 1 / 1.4))
+                    : endRadius;
+
+            LockerView.this.setRadius(radius);
+
+            if ((int) radius == (int) endRadius)
+                return Looper.STOP;
+            return Looper.CONTINUE;
+        }
     }
 
 }
