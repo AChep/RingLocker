@@ -30,6 +30,7 @@ import android.view.View;
 
 import com.achep.Looper;
 import com.achep.ringlocker.R;
+import com.achep.ringlocker.locker.surfaceview.OnUnlockListener;
 import com.achep.ringlocker.utils.DisplayUtils;
 
 /**
@@ -60,14 +61,6 @@ public class LockerView extends View {
     };
 
     private OnUnlockListener mOnUnlockListener;
-
-    public interface OnUnlockListener {
-
-        void unlock();
-
-        void progress(float value);
-
-    }
 
     public LockerView(Context context) {
         super(context);
