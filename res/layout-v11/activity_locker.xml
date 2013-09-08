@@ -28,8 +28,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
+            android:fontFamily="sans-serif-light"
             android:textColor="@android:color/white"
-            android:textSize="80sp" />
+            android:textSize="80sp"
+            android:shadowColor="#60000000"
+            android:shadowRadius="3"
+            android:shadowDx="2"
+            android:shadowDy="2" />
     <TextView
             android:id="@+id/date"
             android:layout_width="wrap_content"
@@ -37,7 +42,12 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="-10dip"
             android:layout_below="@id/time"
+            android:fontFamily="sans-serif-condensed"
             android:textColor="@android:color/white"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            android:shadowColor="#60000000"
+            android:shadowRadius="3"
+            android:shadowDx="2"
+            android:shadowDy="2" />
 
 </RelativeLayout>
