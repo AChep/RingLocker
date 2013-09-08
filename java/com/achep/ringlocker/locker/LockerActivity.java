@@ -28,14 +28,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
 import android.text.format.DateFormat;
-import android.text.format.DateUtils;
 import android.view.KeyEvent;
-import android.view.WindowManager;
 import android.widget.TextView;
 
-import com.achep.Looper;
 import com.achep.ringlocker.R;
-import com.achep.ringlocker.utils.MathUtils;
+import com.achep.ringlocker.locker.surfaceview.LockerSurfaceView;
+import com.achep.ringlocker.locker.surfaceview.OnUnlockListener;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -74,8 +72,8 @@ public class LockerActivity extends Activity {
         mTimeView = (TextView) findViewById(R.id.time);
         mDateView = (TextView) findViewById(R.id.date);
 
-        final LockerView lv = (LockerView) findViewById(R.id.locker);
-        lv.setOnUnlockListener(new LockerView.OnUnlockListener() {
+        final LockerSurfaceView lv = (LockerSurfaceView) findViewById(R.id.locker);
+        lv.setOnUnlockListener(new OnUnlockListener() {
             @Override
             public void unlock() {
                 finish();
