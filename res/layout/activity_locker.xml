@@ -18,7 +18,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent">
 
-    <com.achep.ringlocker.locker.surfaceview.LockerSurfaceView
+    <com.achep.ringlocker.locker.LockerSurfaceView
             android:id="@+id/locker"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"/>

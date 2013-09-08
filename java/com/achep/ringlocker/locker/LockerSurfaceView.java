@@ -1,4 +1,4 @@
-package com.achep.ringlocker.locker.surfaceview;
+package com.achep.ringlocker.locker;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -28,6 +28,17 @@ public class LockerSurfaceView extends SurfaceView implements SurfaceHolder.Call
 
     private RenderThread mRenderThread;
     private OnUnlockListener mListener;
+
+    /**
+     * Created by Artem on 07.09.13.
+     */
+    public static interface OnUnlockListener {
+
+        void unlock();
+
+        void progress(float value);
+
+    }
 
     private boolean mTouched;
     private final float[] mCenter = new float[2];
