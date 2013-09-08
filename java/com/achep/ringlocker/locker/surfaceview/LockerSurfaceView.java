@@ -31,8 +31,7 @@ public class LockerSurfaceView extends SurfaceView implements SurfaceHolder.Call
 
     private boolean mTouched;
     private final float[] mCenter = new float[2];
-    ;
-    private float mTargetRadius =200;
+    private float mTargetRadius;
     private float mRadius;
 
     private Animator mAnimator;
@@ -55,8 +54,6 @@ public class LockerSurfaceView extends SurfaceView implements SurfaceHolder.Call
     }
 
     private void init(Context context) {
-       // setZOrderOnTop(true);
-
         final SurfaceHolder holder = getHolder();
         assert holder != null;
         holder.addCallback(this);
@@ -162,10 +159,24 @@ public class LockerSurfaceView extends SurfaceView implements SurfaceHolder.Call
     // ///////////// -- PUBLIC -- ///////////////
     // //////////////////////////////////////////
 
+    /**
+     * Get the radius of the action-circle.
+     *
+     * @return current radius of the action-circle.
+     * @see #getTargetRadius()
+     * @see #getCenterPoint()
+     */
     public final float getRadius() {
         return mRadius;
     }
 
+    /**
+     * Get the target radius of the action-circle.
+     *
+     * @return target radius of the action-circle.
+     * @see #getRadius()
+     * @see #getCenterPoint()
+     */
     public final float getTargetRadius() {
         return mTargetRadius;
     }
@@ -209,16 +220,17 @@ public class LockerSurfaceView extends SurfaceView implements SurfaceHolder.Call
         private final SurfaceHolder mSurfaceHolder;
         private final Paint mErasePaint;
 
-        public boolean running = true;
+        public volatile boolean running = true;
 
         public RenderThread(SurfaceHolder surfaceHolder, LockerSurfaceView lockerSurfaceView) {
             mLockerSurfaceView = lockerSurfaceView;
             mSurfaceHolder = surfaceHolder;
 
             mErasePaint = new Paint();
+
+            // It's not PorterDuff.Mode.CLEAR to allow antialiasing.
             mErasePaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.MULTIPLY));
             mErasePaint.setAntiAlias(true);
-            mErasePaint.setColor(Color.GREEN);
             mErasePaint.setAlpha(0);
         }
 
@@ -233,16 +245,17 @@ public class LockerSurfaceView extends SurfaceView implements SurfaceHolder.Call
                         if (running) draw(canvas);
                     }
                 } finally {
-                    if (canvas!= null) {
+                    if (canvas != null) {
                         mSurfaceHolder.unlockCanvasAndPost(canvas);
                     }
                 }
 
-                /*try {
+                /*
+                try {
                     Thread.sleep(10);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
-                }*/
+                } */
             }
         }
 
@@ -255,8 +268,9 @@ public class LockerSurfaceView extends SurfaceView implements SurfaceHolder.Call
                 float ratio = radius / targetRadius;
                 if (ratio > 1f) ratio = 1f;
 
-                canvas.drawColor(0, PorterDuff.Mode.CLEAR);
-                canvas.drawARGB((int) (210 * (1f - ratio)), 0, 0, 0);
+                canvas.drawColor(Color.argb(
+                        (int) (210 * (1f - ratio)), 0, 0, 0
+                ), PorterDuff.Mode.SRC);
                 canvas.drawCircle(center[0], center[1], radius, mErasePaint);
             }
         }
